@@ -56,12 +56,17 @@ class ImageAttachmentAction extends Action
 
         if ($remove) {
             $behavior->removeImages();
+            $behavior->extension = 'gif';
+            $behavior->removeImages();
 
             return Json::encode(array());
         } else {
             /** @var UploadedFile $imageFile */
             $imageFile = UploadedFile::getInstanceByName('image');
-            $behavior->setImage($imageFile->tempName);
+            if($imageFile->type == 'image/gif') {
+                $extension = 'gif';
+            }
+            $behavior->setImage($imageFile->tempName, $extension);
 
             return Json::encode(
                 array(

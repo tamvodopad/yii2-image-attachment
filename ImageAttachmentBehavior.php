@@ -172,7 +172,11 @@ class ImageAttachmentBehavior extends Behavior
     public function hasImage($ext = null)
     {
         $originalImage = $this->getFilePath('original', null, $ext);
-
+        $is_file = file_exists($originalImage);
+        if(!file_exists($originalImage)){
+            $this->extension = 'gif';
+            $originalImage = $this->getFilePath('original', null, $ext);
+        }
         return file_exists($originalImage);
     }
 
@@ -188,10 +192,10 @@ class ImageAttachmentBehavior extends Behavior
         return $id . '/' . $version . '.' . $ext;
     }
 
-    public function getUrl($version)
+    public function getUrl($version, $extension=null)
     {
         if (!$this->hasImage()) {
-            return null;
+                return null;
         }
         if (!empty($this->timeHash)) {
             $time = filemtime($this->getFilePath($version));
@@ -225,9 +229,13 @@ class ImageAttachmentBehavior extends Behavior
      *
      * @param $path
      */
-    public function setImage($path)
+    public function setImage($path, $extension=null)
     {
         $this->checkDirectories();
+        if ($extension != null) {
+            $this->extension = $extension;
+        }
+        $this->removeImages('jpg');
 
         $originalImage = Image::getImagine()->open($path);
         //save image in original size
