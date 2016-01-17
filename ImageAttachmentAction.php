@@ -63,6 +63,7 @@ class ImageAttachmentAction extends Action
         } else {
             /** @var UploadedFile $imageFile */
             $imageFile = UploadedFile::getInstanceByName('image');
+            $extension = null;
             if($imageFile->type == 'image/gif') {
                 $extension = 'gif';
             }
